@@ -3,6 +3,8 @@
 #include <lemon/list_graph.h>
 
 int main(){
+   //NOTE: this script is just a demonstration of how one could go about this. 
+   //Maybe there are better ways though
    lemon::ListGraph g;
    //Want to keep list of "lemon::ListGraph::Node"s
    std::vector<lemon::ListGraph::Node> my_nodes;
