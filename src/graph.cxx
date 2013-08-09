@@ -1,19 +1,17 @@
 #include <iostream> 
 #include <lemon/list_graph.h>
+#include <lemon/concepts/graph.h>
 
 int main(){
    lemon::ListGraph g;
-   int i = 1;
-   std::cout << "so far so good, now the for loop" << i << std::endl;
-   for( i = 1; i<= 4; i++){
+   std::cout << "so far so good, now the for loop" << std::endl;
+   for(int  i = 0; i< 4; i++){
      g.addNode();
-     std::cout << "we have node: " <<  i  << std::endl:
-     int j = 1;
-     while(j!=i){   
-        g.addEdge(i,j);
-        std::cout << "now we have edge: " << k << std:: endl;
-        j++;
-     }
+     std::cout << "we have another node: " << i  << std::endl;}
+   for (lemon::listGraph::NodeIt n(g); n != INVALID; ++n){
+     for (lemon::listGraph::NodeIt m(g); m!=INVALID; ++m){
+        g.addEdge(n,m);
+        std::cout<< "we have an edge from " << n << " to " << m << std::endl; }}
    return 0;
 }
 
