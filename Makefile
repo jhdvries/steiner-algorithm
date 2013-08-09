@@ -42,7 +42,7 @@ EXE_SRC_DIR = ${SRC_DIR}
 
 # Includes and Libraries
 INC_FLAGS += -I${INC_DIR}
-LIB_FLAGS += 
+LIB_FLAGS += -lglpk -lemon
 
 
 # Compile-Time Definitions
