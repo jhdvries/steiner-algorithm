@@ -51,8 +51,8 @@ int main(){
     //add constraints each node has at least one outgoing arc
     lp.addRow( x[Graph::edgeFromId(1)] + x[Graph::edgeFromId(2)] + x[Graph::edgeFromId(3)] >= 1);
     lp.addRow( x[Graph::edgeFromId(1)] + x[Graph::edgeFromId(4)] + x[Graph::edgeFromId(5)] >= 1);
-    lp.addRow( x[Graph::edgeFromId(2)] + x[Graph::edgeFromId(4)] + x[Graph::edgeFromId(6)] >= 1);
-    lp.addRow( x[Graph::edgeFromId(5)] + x[Graph::edgeFromId(3)] + x[Graph::edgeFromId(6)] >= 1);
+    lp.addRow( x[Graph::edgeFromId(2)] + x[Graph::edgeFromId(4)] + x[Graph::edgeFromId(0)] >= 1);
+    lp.addRow( x[Graph::edgeFromId(5)] + x[Graph::edgeFromId(3)] + x[Graph::edgeFromId(0)] >= 1);
     
     //add lowerbounds on variables
     lp.colLowerBound(x[Graph::edgeFromId(1)], 0);
@@ -60,12 +60,12 @@ int main(){
     lp.colLowerBound(x[Graph::edgeFromId(3)], 0);
     lp.colLowerBound(x[Graph::edgeFromId(4)], 0);
     lp.colLowerBound(x[Graph::edgeFromId(5)], 0);
-    lp.colLowerBound(x[Graph::edgeFromId(6)], 0);
+    lp.colLowerBound(x[Graph::edgeFromId(0)], 0);
     
     //add objective function
     lp.min();
 
-     lp.obj(cost[Graph::edgeFromId(1)]*x[Graph::edgeFromId(1)]+cost[Graph::edgeFromId(2)]*x[Graph::edgeFromId(2)]+cost[Graph::edgeFromId(3)]*x[Graph::edgeFromId(3)]+cost[Graph::edgeFromId(4)]*x[Graph::edgeFromId(4)]+cost[Graph::edgeFromId(5)]*x[Graph::edgeFromId(5)]+cost[Graph::edgeFromId(6)]*x[Graph::edgeFromId(6)]);
+     lp.obj(cost[Graph::edgeFromId(1)]*x[Graph::edgeFromId(1)]+cost[Graph::edgeFromId(2)]*x[Graph::edgeFromId(2)]+cost[Graph::edgeFromId(3)]*x[Graph::edgeFromId(3)]+cost[Graph::edgeFromId(4)]*x[Graph::edgeFromId(4)]+cost[Graph::edgeFromId(5)]*x[Graph::edgeFromId(5)]+cost[Graph::edgeFromId(0)]*x[Graph::edgeFromId(0)]);
 
     //solve the LP
     lp.solve();
@@ -79,7 +79,7 @@ int main(){
       std::cout << "x3 = " << lp.primal(x[Graph::edgeFromId(3)]) << std::endl;
       std::cout << "x4 = " << lp.primal(x[Graph::edgeFromId(4)]) << std::endl;
       std::cout << "x5 = " << lp.primal(x[Graph::edgeFromId(5)]) << std::endl;
-      std::cout << "x6 = " << lp.primal(x[Graph::edgeFromId(6)]) << std::endl;
+      std::cout << "x6 = " << lp.primal(x[Graph::edgeFromId(0)]) << std::endl;
     }
     else {
     std::cout << "Optimal solution not found." << std::endl;
