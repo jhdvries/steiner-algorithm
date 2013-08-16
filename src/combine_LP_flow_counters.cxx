@@ -10,7 +10,7 @@ int main(){
   lemon::ListGraph g;
 
   //cost function on the edges
-  lemon::ListGraph::EdgeMap<edge>c(g);
+  lemon::ListGraph::EdgeMap<edge> c(g);
  
   //Adding 4 nodes to the graph
   for(int i=0; i<4; i++){
@@ -26,8 +26,8 @@ int main(){
         lemon::ListGraph::Edge temp_edge= g.addEdge(u,v);
                                          
         //assigns cost function
-        if(u>v) c[temp_edge]= u-v;
-        else c[temp_edge]= v-u;
+        if(g.id(u)>g.id(v)) c[temp_edge]=g.id(u)-g.id(v);
+        else c[temp_edge]=g.id(v)-g.id(u);
 
         std::cout << "Added edge with ids u: " << g.id(u) << " v: " <<  g.id(v) << "and costs" << c[temp_edge] <<  std::endl;
       }
@@ -74,7 +74,7 @@ int main(){
   
   for(lemon::ListGraph::NodeIt n(g); n!=Invalid; ++n){
     for(lemon::ListGraph::NodeIt u(g); u!=Invalid; ++u){
-      for(lemon::ListGraph::NodeIt v(g); v!=Invalid; ++v){
+      for(v(g) = u; v!=Invalid; ++v){
         
         //if n is the source, define the value of the flow
         if(n==u){
@@ -85,7 +85,7 @@ int main(){
           for(lemon::ListGraph::InArcIt a(g,n); a!= Invalid; ++a)  y-=f[u][v][a];
 
           //The value of the flow is equal to the number of internally vertex/edge? disjoint paths
-          Lp.addrow(y >= r[u][v]);
+          Lp.addrow(y >= g.id(v)-g.id(u));
         }
         else{
           if(n!=v){
