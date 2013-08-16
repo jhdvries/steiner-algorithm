@@ -42,11 +42,16 @@ int main(){
 
   //define LP
   lemon::Lp lp;
-  
+
+   std::cout<< "Defined LP p " << std::endl; 
+
   //define capacity variable x and flow variable f
   lemon::ListGraph::EdgeMap<lemon::Lp::Col> x(g);
   std::map<SourceTargetEdge, lemon::Lp::Col> f;
 
+   std::cout<< "Defined LP and initialised both the x variable map and the f variable map " << std::endl;; 
+
+    lp.addColSet(x);
   //Assign capacity constraints to x and f and initialising f variables
   for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
     
@@ -66,7 +71,7 @@ int main(){
         lp.colLowerBound(f[f1],0);
         lp.colUpperBound(f[f1],1);
 
-        std::cout<< "upper Lowerbounds for x-var and flow-var on edge " << g.id(u) << g.id(v) << " defined" << std::cout; 
+        std::cout<< "upper Lowerbounds for x-var and flow-var on edge " << g.id(u) << g.id(v) << " defined" << std::endl; 
       }
     }   
   }
@@ -94,6 +99,9 @@ int main(){
             //initialising SourceTargetEdge template and adding to arc flow to expr
             SourceTargetEdge f1(u,v,a);            
             y+=f[f1];
+
+            //capacity  constraint for flow
+            lp.addRow(x[a]-f[f1]>=0);
           }
 
           //Second iterating over outflow
@@ -101,11 +109,15 @@ int main(){
 
             //initialising SourceTargetEdge template and adding to arc flow to expr
             SourceTargetEdge f1(u,v,a);            
-            y+=f[f1];
+            y-=f[f1];
+           
+            //capacity constraint for flow
+            lp.addRow(x[a]-f[f1]>=0);
           }
 
           //The value of the flow is equal to the number of internally vertex/edge? disjoint paths
-          lp.addRow(y >= g.id(v)-g.id(u));
+          lp.addRow(y >=2); // g.id(u)-g.id(v));
+          std::cout << "The connectivity requirement between node " << g.id(u) << " and node " << g.id(v) << " is " << 2 << std::endl; // g.id(u)-g.id(v) << std::endl;
         }
         else{
           if(n!=v){
@@ -119,6 +131,9 @@ int main(){
               //initialising SourceTargetEdge template and adding to arc flow to expr
               SourceTargetEdge f1(u,v,a);            
               y+=f[f1];
+ 
+              //capacity constraint for flow
+              lp.addRow(x[a]-f[f1]>=0);
             }
 
             //Second iterating over outflow
@@ -127,10 +142,31 @@ int main(){
               //initialising SourceTargetEdge template and adding to arc flow to expr
               SourceTargetEdge f1(u,v,a);            
               y+=f[f1];
+              
+              //capacity constraint for flow
+              lp.addRow(x[a]-f[f1]>=0);         
             }
 
             //The value of the flow is equal to the number of internally vertex/edge? disjoint paths
             lp.addRow(y = 0);
+          }
+          else{
+            
+             //First iterating over inflow
+            for(lemon::ListGraph::OutArcIt a(g,n); a!= lemon::INVALID; ++a){ 
+              
+              //capacity constraint for flow
+              SourceTargetEdge f1(u,v,a);
+              lp.addRow(x[a]-f[f1]>=0);
+            }
+
+            //Second iterating over outflow
+            for(lemon::ListGraph::InArcIt a(g,n); a!= lemon::INVALID; ++a){ 
+              
+              //capacity constraint for flow
+              SourceTargetEdge f1(u,v,a);
+              lp.addRow(x[a]-f[f1]>=0);         
+            }
           }
         }
       }
@@ -157,7 +193,7 @@ int main(){
     
     //print all edges and the corresponding x values
     for(lemon::ListGraph::EdgeIt e(g); e!=lemon::INVALID; ++e){
-    //  std::cout << "x[" << g.id(g.u(e)) << g.id(g.v(e)) << "] = " << x[e] << std::endl;
+      std::cout << "x[" << g.id(g.u(e)) << g.id(g.v(e)) << "] = "<< lp.primal(x[e])  << std::endl;
     }
   }
 
