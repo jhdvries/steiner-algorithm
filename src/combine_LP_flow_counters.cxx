@@ -10,7 +10,7 @@ int main(){
   lemon::ListGraph g;
 
   //cost function on the edges
-  lemon::ListGraph::EdgeMap<edge> c(g);
+  lemon::ListGraph::EdgeMap<int> c(g);
  
   //Adding 4 nodes to the graph
   for(int i=0; i<4; i++){
@@ -29,7 +29,7 @@ int main(){
         if(g.id(u)>g.id(v)) c[temp_edge]=g.id(u)-g.id(v);
         else c[temp_edge]=g.id(v)-g.id(u);
 
-        std::cout << "Added edge with ids u: " << g.id(u) << " v: " <<  g.id(v) << "and costs" << c[temp_edge] <<  std::endl;
+        std::cout << "Added edge with ids u: " << g.id(u) << " v: " <<  g.id(v) << " and costs " << c[temp_edge] <<  std::endl;
       }
       else{
         std::cout << "Didn't make node, because the Nodes were the same" << std::endl; 
@@ -44,26 +44,30 @@ int main(){
   lemon::Lp lp;
   
   //define capacity variable x and flow variable f
-  lemon::ListGraph::EdgeMap <LP::col> x(g);
+  lemon::ListGraph::EdgeMap<lemon::Lp::Col> x(g);
   std::map<SourceTargetEdge, lemon::Lp::Col> f;
 
-  //Assign capacity constraints to x and f
-  for(lemon::ListGraph::EdgeIt e(g); e != Invalid; ++e){
+  //Assign capacity constraints to x and f and initialising f variables
+  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
     
     //capacity constraint for x
     lp.colLowerBound(x[e],0);
     lp.colUpperBound(x[e],1);
 
     //loop over all pairs of nodes
-    for(lemon::ListGraph::NodeIt u(g); u!=Invalid; ++u){
-      for(lemon::ListGraph::NodeIt u(g); u!=Invalid; ++u){
+    for(lemon::ListGraph::NodeIt u(g); u!=lemon::INVALID; ++u){
+      for(lemon::ListGraph::NodeIt v(g); v!=lemon::INVALID; ++v){
        
+        //initialisng f variables for eacht SourceTargetEdge
+        SourceTargetEdge f1(u,v,e);
+        f[f1]=lp.addCol();
+
         //capacity constraints for f
-        lp.colLowerBound(f[u][v][e],0);
-        lp.colupperBound(f[u][v][e],x[e]);
-       
+        lp.colLowerBound(f[f1],0);
+        lp.colUpperBound(f[f1],1);
+
+        std::cout<< "upper Lowerbounds for x-var and flow-var on edge " << g.id(u) << g.id(v) << " defined" << std::cout; 
       }
-    
     }   
   }
   
@@ -72,29 +76,61 @@ int main(){
   //And the flow value constraint for the source n
   //this is done for all pair (of source and target) u,v
   
-  for(lemon::ListGraph::NodeIt n(g); n!=Invalid; ++n){
-    for(lemon::ListGraph::NodeIt u(g); u!=Invalid; ++u){
-      for(v(g) = u; v!=Invalid; ++v){
+  for(lemon::ListGraph::NodeIt n(g); n!=lemon::INVALID; ++n){
+    for(lemon::ListGraph::NodeIt u(g); u!=lemon::INVALID; ++u){
+      lemon::ListGraph::NodeIt w(g,u);
+      ++w;
+      for(lemon::ListGraph::NodeIt v(g,w); v!=lemon::INVALID; ++v){
         
         //if n is the source, define the value of the flow
         if(n==u){
+         
+          //Expr y is value of flow we loop over outarcs of n to create value of flow
+          lemon::Lp::Expr y;
           
-          //expre y is value of flow we loop over outarcs of n to create value of flow
-          lemon::Lp::expr y;
-          for(lemon::ListGraph::OutArcIt a(g,n); a!= Invalid; ++a)  y+=f[u][v][a];
-          for(lemon::ListGraph::InArcIt a(g,n); a!= Invalid; ++a)  y-=f[u][v][a];
+          //First iterating over inflow
+          for(lemon::ListGraph::OutArcIt a(g,n); a!= lemon::INVALID; ++a){ 
+            
+            //initialising SourceTargetEdge template and adding to arc flow to expr
+            SourceTargetEdge f1(u,v,a);            
+            y+=f[f1];
+          }
+
+          //Second iterating over outflow
+          for(lemon::ListGraph::InArcIt a(g,n); a!= lemon::INVALID; ++a){ 
+
+            //initialising SourceTargetEdge template and adding to arc flow to expr
+            SourceTargetEdge f1(u,v,a);            
+            y+=f[f1];
+          }
 
           //The value of the flow is equal to the number of internally vertex/edge? disjoint paths
-          Lp.addrow(y >= g.id(v)-g.id(u));
+          lp.addRow(y >= g.id(v)-g.id(u));
         }
         else{
           if(n!=v){
+          
+            //Expr y is value of flow we loop over outarcs of n to create value of flow
+            lemon::Lp::Expr y;
+          
+            //First iterating over inflow
+            for(lemon::ListGraph::OutArcIt a(g,n); a!= lemon::INVALID; ++a){ 
             
-            //conservation of flow constraint for all non source or target nodes.
-            lemon::Lp::expr y;
-            for(lemon::ListGraph::OutArcIt a(g,n); a!= Invalid; ++a)  y+=f[u][v][a];
-            for(lemon::ListGraph::InArcIt a(g,n); a!= Invalid; ++a)  y-=f[u][v][a];
-            Lp.addrow(y = 0);
+              //initialising SourceTargetEdge template and adding to arc flow to expr
+              SourceTargetEdge f1(u,v,a);            
+              y+=f[f1];
+            }
+
+            //Second iterating over outflow
+            for(lemon::ListGraph::InArcIt a(g,n); a!= lemon::INVALID; ++a){ 
+
+              //initialising SourceTargetEdge template and adding to arc flow to expr
+              SourceTargetEdge f1(u,v,a);            
+              y+=f[f1];
+            }
+
+            //The value of the flow is equal to the number of internally vertex/edge? disjoint paths
+            lp.addRow(y = 0);
           }
         }
       }
@@ -103,10 +139,10 @@ int main(){
   
 
   //defining the objective function 
-  Lp::expr obj;
+  lemon::Lp::Expr obj;
 
   //cost of all arcs included is the objective functions
-  for(lemon::ListGraph::EdgeIt e; e!=Invalid; ++e) obj+=x[e]*x[e];
+  for(lemon::ListGraph::EdgeIt e(g); e!=lemon::INVALID; ++e) obj+=c[e]*x[e];
   
   //minimization problem 
   lp.min();
@@ -120,8 +156,8 @@ int main(){
     std::cout << "Objective function value: " << lp.primal() << std::endl;
     
     //print all edges and the corresponding x values
-    for(lemon::ListGraph::EdgeIt e; e!=Invalid; ++e){
-      std::cout << "x[" << e << "] = " << x[e] << std::endl;
+    for(lemon::ListGraph::EdgeIt e(g); e!=lemon::INVALID; ++e){
+    //  std::cout << "x[" << g.id(g.u(e)) << g.id(g.v(e)) << "] = " << x[e] << std::endl;
     }
   }
 
