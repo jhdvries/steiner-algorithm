@@ -61,17 +61,20 @@ int main(){
 
     //loop over all pairs of nodes
     for(lemon::ListGraph::NodeIt u(g); u!=lemon::INVALID; ++u){
-      for(lemon::ListGraph::NodeIt v(g); v!=lemon::INVALID; ++v){
-       
-        //initialisng f variables for eacht SourceTargetEdge
-        SourceTargetEdge f1(u,v,e);
-        f[f1]=lp.addCol();
+      for(lemon::ListGraph::NodeIt v(u); v!=lemon::INVALID; ++v){
+        if(u!=v){
+          //initialisng f variables for eacht SourceTargetEdge
+          SourceTargetEdge f1(u,v,e);
+          f[f1]=lp.addCol();
 
-        //capacity constraints for f
-        lp.colLowerBound(f[f1],0);
-        lp.colUpperBound(f[f1],1);
+          //capacity constraints for f
+          lp.colLowerBound(f[f1],0);
 
-        std::cout<< "upper Lowerbounds for x-var and flow-var on edge " << g.id(u) << g.id(v) << " defined" << std::endl; 
+          //upper bound for flow
+          lp.addRow(x[e]-f[f1]>=0);
+
+    //    std::cout<< "upper Lowerbounds for x-var and flow-var on edge " << g.id(u) << g.id(v) << " defined" << std::endl; 
+        }
       }
     }   
   }
@@ -81,92 +84,36 @@ int main(){
   //And the flow value constraint for the source n
   //this is done for all pair (of source and target) u,v
   
-  for(lemon::ListGraph::NodeIt n(g); n!=lemon::INVALID; ++n){
-    for(lemon::ListGraph::NodeIt u(g); u!=lemon::INVALID; ++u){
-      lemon::ListGraph::NodeIt w(g,u);
-      ++w;
-      for(lemon::ListGraph::NodeIt v(g,w); v!=lemon::INVALID; ++v){
-        
-        //if n is the source, define the value of the flow
-        if(n==u){
-         
-          //Expr y is value of flow we loop over outarcs of n to create value of flow
-          lemon::Lp::Expr y;
-          
-          //First iterating over inflow
-          for(lemon::ListGraph::OutArcIt a(g,n); a!= lemon::INVALID; ++a){ 
-            
-            //initialising SourceTargetEdge template and adding to arc flow to expr
-            SourceTargetEdge f1(u,v,a);            
-            y+=f[f1];
-
-            //capacity  constraint for flow
-            lp.addRow(x[a]-f[f1]>=0);
-          }
-
-          //Second iterating over outflow
-          for(lemon::ListGraph::InArcIt a(g,n); a!= lemon::INVALID; ++a){ 
-
-            //initialising SourceTargetEdge template and adding to arc flow to expr
-            SourceTargetEdge f1(u,v,a);            
-            y-=f[f1];
-           
-            //capacity constraint for flow
-            lp.addRow(x[a]-f[f1]>=0);
-          }
-
-          //The value of the flow is equal to the number of internally vertex/edge? disjoint paths
-          lp.addRow(y >=2); // g.id(u)-g.id(v));
-          std::cout << "The connectivity requirement between node " << g.id(u) << " and node " << g.id(v) << " is " << 2 << std::endl; // g.id(u)-g.id(v) << std::endl;
+  for(lemon::ListGraph::NodeIt source(g); source!=lemon::INVALID; ++source){
+    for(lemon::ListGraph::NodeIt target(source); target!=lemon::INVALID; ++target){
+      if (source!=target){ 
+        //define flowval, bij ouflow minus inflow of source
+        lemon::Lp::Expr flowVal;
+        for (lemon::ListGraph::OutArcIt arc(g,source); arc != lemon::INVALID; ++arc){
+          SourceTargetEdge f1(source,target,arc);
+          flowVal += f[f1];
         }
-        else{
-          if(n!=v){
-          
-            //Expr y is value of flow we loop over outarcs of n to create value of flow
-            lemon::Lp::Expr y;
-          
-            //First iterating over inflow
-            for(lemon::ListGraph::OutArcIt a(g,n); a!= lemon::INVALID; ++a){ 
-            
-              //initialising SourceTargetEdge template and adding to arc flow to expr
-              SourceTargetEdge f1(u,v,a);            
-              y+=f[f1];
- 
-              //capacity constraint for flow
-              lp.addRow(x[a]-f[f1]>=0);
+        for (lemon::ListGraph::InArcIt arc(g,source); arc != lemon::INVALID; ++arc){ 
+          SourceTargetEdge f1(source,target,arc); 
+          flowVal -= f[f1];
+        }
+        //set connectivity requirement to 2 fro the time being
+        lp.addRow(flowVal>=2);
+        
+        //formulate conservation of flow constraints for the all non-source and non-target nodes
+        for(lemon::ListGraph::NodeIt n(g); n!=lemon::INVALID; ++n){
+          if(n!=source && n!= target){
+            lemon::Lp::Expr nodeFlow;
+            for (lemon::ListGraph::OutArcIt arc(g,n); arc != lemon::INVALID; ++arc){
+              SourceTargetEdge f1(source,target,arc); 
+              nodeFlow -= f[f1];
             }
-
-            //Second iterating over outflow
-            for(lemon::ListGraph::InArcIt a(g,n); a!= lemon::INVALID; ++a){ 
-
-              //initialising SourceTargetEdge template and adding to arc flow to expr
-              SourceTargetEdge f1(u,v,a);            
-              y+=f[f1];
-              
-              //capacity constraint for flow
-              lp.addRow(x[a]-f[f1]>=0);         
+            for (lemon::ListGraph::InArcIt arc(g,n); arc != lemon::INVALID; ++arc){
+              SourceTargetEdge f1(source,target,arc); 
+              nodeFlow -= f[f1];
             }
-
-            //The value of the flow is equal to the number of internally vertex/edge? disjoint paths
-            lp.addRow(y = 0);
-          }
-          else{
-            
-             //First iterating over inflow
-            for(lemon::ListGraph::OutArcIt a(g,n); a!= lemon::INVALID; ++a){ 
-              
-              //capacity constraint for flow
-              SourceTargetEdge f1(u,v,a);
-              lp.addRow(x[a]-f[f1]>=0);
-            }
-
-            //Second iterating over outflow
-            for(lemon::ListGraph::InArcIt a(g,n); a!= lemon::INVALID; ++a){ 
-              
-              //capacity constraint for flow
-              SourceTargetEdge f1(u,v,a);
-              lp.addRow(x[a]-f[f1]>=0);         
-            }
+     
+            lp.addRow(nodeFlow==0);
           }
         }
       }
@@ -200,6 +147,20 @@ int main(){
   //When it doesn't
   else {
     std::cout << "Optimal solution not found." << std::endl;
+
+    if(lp.primalType() == lemon::Lp::UNDEFINED){
+      std::cout << "Because the problem is undefined" << std::endl;
+    }
+    if(lp.primalType() == lemon::Lp::INFEASIBLE){
+      std::cout << "Because the problem is infeasible" << std::endl;
+    }
+    if(lp.primalType() == lemon::Lp::FEASIBLE){
+      std::cout << "Althoug the problem is feasible" << std::endl;
+    }
+    if(lp.primalType() == lemon::Lp::UNBOUNDED){
+      std::cout << "Because the problem is unbounded" << std::endl;
+    }
+
   }
 
 
