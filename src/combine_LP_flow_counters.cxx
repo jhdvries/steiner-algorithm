@@ -2,7 +2,7 @@
 #include <lemon/list_graph.h>
 #include <lemon/glpk.h>
 #include <lemon/lp.h>
-#include "SourceTargetEdge.h"
+#include "SourceTargetArc.h"
 
 int main(){
     
@@ -26,8 +26,9 @@ int main(){
         lemon::ListGraph::Edge temp_edge= g.addEdge(u,v);
                                          
         //assigns cost function
-        if(g.id(u)>g.id(v)) c[temp_edge]=g.id(u)-g.id(v);
-        else c[temp_edge]=g.id(v)-g.id(u);
+       // if(g.id(u)>g.id(v)) c[temp_edge]=g.id(u)-g.id(v);
+       // else c[temp_edge]=g.id(v)-g.id(u);
+        c[temp_edge] =1;
 
         std::cout << "Added edge with ids u: " << g.id(u) << " v: " <<  g.id(v) << " and costs " << c[temp_edge] <<  std::endl;
       }
@@ -47,7 +48,7 @@ int main(){
 
   //define capacity variable x and flow variable f
   lemon::ListGraph::EdgeMap<lemon::Lp::Col> x(g);
-  std::map<SourceTargetEdge, lemon::Lp::Col> f;
+  std::map<SourceTargetArc, lemon::Lp::Col> f;
 
    std::cout<< "Defined LP and initialised both the x variable map and the f variable map " << std::endl;; 
 
@@ -58,23 +59,27 @@ int main(){
     //capacity constraint for x
     lp.colLowerBound(x[e],0);
     lp.colUpperBound(x[e],1);
-
+  }
+ 
+ //assign upper bounds to flow variables
+ for(lemon::ListGraph::ArcIt a(g); a != lemon::INVALID; ++a){ 
     //loop over all pairs of nodes
     for(lemon::ListGraph::NodeIt u(g); u!=lemon::INVALID; ++u){
       for(lemon::ListGraph::NodeIt v(u); v!=lemon::INVALID; ++v){
         if(u!=v){
-          //initialisng f variables for eacht SourceTargetEdge
-          SourceTargetEdge f1(u,v,e);
+          //initialisng f variables for eacht SourceTargetArc
+          SourceTargetArc f1(u,v,a);
           f[f1]=lp.addCol();
 
           //capacity constraints for f
           lp.colLowerBound(f[f1],0);
 
           //upper bound for flow
-          lp.addRow(x[e]-f[f1]>=0);
+          lp.addRow(x[lemon::ListGraph::Edge(a)]-f[f1]>=0);
 
-    //    std::cout<< "upper Lowerbounds for x-var and flow-var on edge " << g.id(u) << g.id(v) << " defined" << std::endl; 
-        }
+          if( g.direction(a)== true)std::cout<< "arc " << g.id(g.u(a)) << " " << g.id(g.v(a)) << " with arc id " << g.id(a) << " has the same direction as edge: " << g.id(g.u(lemon::ListGraph::Edge(a)))<< " " << g.id(g.v(lemon::ListGraph::Edge(a))) << "]"  <<  std::endl;       
+          else std::cout<< "arc " << g.id(g.u(a)) << " " << g.id(g.v(a)) << " with arc id " << g.id(a) << " has the same direction as edge: " << g.id(g.u(lemon    ::ListGraph::Edge(a)))<< " " << g.id(g.v(lemon::ListGraph::Edge(a))) << "]"  <<  std::endl; 
+       }
       }
     }   
   }
@@ -90,26 +95,26 @@ int main(){
         //define flowval, bij ouflow minus inflow of source
         lemon::Lp::Expr flowVal;
         for (lemon::ListGraph::OutArcIt arc(g,source); arc != lemon::INVALID; ++arc){
-          SourceTargetEdge f1(source,target,arc);
+          SourceTargetArc f1(source,target,arc);
           flowVal += f[f1];
         }
         for (lemon::ListGraph::InArcIt arc(g,source); arc != lemon::INVALID; ++arc){ 
-          SourceTargetEdge f1(source,target,arc); 
+          SourceTargetArc f1(source,target,arc); 
           flowVal -= f[f1];
         }
         //set connectivity requirement to 2 fro the time being
-        lp.addRow(flowVal>=2);
+        lp.addRow(flowVal>=1);
         
         //formulate conservation of flow constraints for the all non-source and non-target nodes
         for(lemon::ListGraph::NodeIt n(g); n!=lemon::INVALID; ++n){
           if(n!=source && n!= target){
             lemon::Lp::Expr nodeFlow;
             for (lemon::ListGraph::OutArcIt arc(g,n); arc != lemon::INVALID; ++arc){
-              SourceTargetEdge f1(source,target,arc); 
+              SourceTargetArc f1(source,target,arc); 
               nodeFlow -= f[f1];
             }
             for (lemon::ListGraph::InArcIt arc(g,n); arc != lemon::INVALID; ++arc){
-              SourceTargetEdge f1(source,target,arc); 
+              SourceTargetArc f1(source,target,arc); 
               nodeFlow -= f[f1];
             }
      
