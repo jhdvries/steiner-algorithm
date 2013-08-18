@@ -5,3 +5,8 @@ SourceTargetEdge::SourceTargetEdge(lemon::ListGraph::Node source,lemon::ListGrap
 {
     //deliberatley emtpy
 }
+
+//NOTE: This a dummy operator, which is only introduced as it is required by std::map
+bool SourceTargetEdge::operator < ( SourceTargetEdge ste) const{
+    return (_source<ste._source);
+}

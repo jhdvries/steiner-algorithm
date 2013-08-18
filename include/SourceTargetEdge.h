@@ -7,6 +7,7 @@ class SourceTargetEdge{
         SourceTargetEdge(){}
         SourceTargetEdge(lemon::ListGraph::Node,lemon::ListGraph::Node,lemon::ListGraph::Edge);
         ~SourceTargetEdge(){}
+        bool operator < (const SourceTargetEdge ste1) const;
     private:
         lemon::ListGraph::Node _source;
         lemon::ListGraph::Node _target;
