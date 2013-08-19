@@ -13,7 +13,7 @@ int main(){
   lemon::ListGraph::EdgeMap<int> c(g);
  
   //Adding 4 nodes to the graph
-  for(int i=0; i<4; i++){
+  for(int i=0; i<10; i++){
     g.addNode();
   }
 
@@ -26,9 +26,8 @@ int main(){
         lemon::ListGraph::Edge temp_edge= g.addEdge(u,v);
                                          
         //assigns cost function
-       // if(g.id(u)>g.id(v)) c[temp_edge]=g.id(u)-g.id(v);
-       // else c[temp_edge]=g.id(v)-g.id(u);
-        c[temp_edge] =1;
+        if(g.id(u)>g.id(v)) c[temp_edge]=g.id(u)-g.id(v);
+        else c[temp_edge]=g.id(v)-g.id(u);
 
         std::cout << "Added edge with ids u: " << g.id(u) << " v: " <<  g.id(v) << " and costs " << c[temp_edge] <<  std::endl;
       }
@@ -48,7 +47,7 @@ int main(){
 
   //define capacity variable x and flow variable f
   lemon::ListGraph::EdgeMap<lemon::Lp::Col> x(g);
-  std::map<SourceTargetArc, lemon::Lp::Col> f;
+  std::map<int, lemon::Lp::Col> f;
 
    std::cout<< "Defined LP and initialised both the x variable map and the f variable map " << std::endl;; 
 
@@ -64,26 +63,41 @@ int main(){
  //assign upper bounds to flow variables
  for(lemon::ListGraph::ArcIt a(g); a != lemon::INVALID; ++a){ 
     //loop over all pairs of nodes
-    for(lemon::ListGraph::NodeIt u(g); u!=lemon::INVALID; ++u){
-      for(lemon::ListGraph::NodeIt v(u); v!=lemon::INVALID; ++v){
-        if(u!=v){
+    for(lemon::ListGraph::NodeIt source(g); source!=lemon::INVALID; ++source){
+      for(lemon::ListGraph::NodeIt target(source); target!=lemon::INVALID; ++target){
+        if(source!=target){
+          std::cout << "Ard id: " <<g.id(a) << std::endl;
+          std::cout << "  Source ID: " << g.id(source) << " Target ID: " << g.id(target) << std::endl;
+          std::cout << "  arc direction aligned with edge: " << g.direction(a) << std::endl;
+          std::cout << "  Size of flow variables f: " << f.size() << std::endl; 
           //initialisng f variables for eacht SourceTargetArc
-          SourceTargetArc f1(u,v,a);
-          f[f1]=lp.addCol();
+          SourceTargetArc f1(&g,source,target,a);
+         // f.insert(std::pair<SourceTargetArc, lemon::Lp::Col> (f1,lp.addCol()));
+          std::map<SourceTargetArc,lemon::Lp::Col>::iterator it;
+//          for (it=f.begin();it!=f.end();it++){
+//            if (f1<it->first){
+//                std::cout << "      f1 is Smaller" << std::endl;
+//            }
+//            else{
+//                std::cout << "      f1 is Greater" << std::endl;
+//            
+//            }
+//          }
+          f[f1.id()]=lp.addCol();
+          std::cout << "  Size of flow variables f: " << f.size() << std::endl; 
+          if (f.find(f1.id())!=f.end()) std::cout <<"  yep"<<std::endl;
+          else  std::cout << "  I CANNOT FIND THE ELEMENT THE I JUST ADDED" << std::endl;
 
           //capacity constraints for f
-          lp.colLowerBound(f[f1],0);
-
+          lp.colLowerBound(f[f1.id()],0);
+          lp.colUpperBound(f[f1.id()],1);  
           //upper bound for flow
-          lp.addRow(x[lemon::ListGraph::Edge(a)]-f[f1]>=0);
-
-          if( g.direction(a)== true)std::cout<< "arc " << g.id(g.u(a)) << " " << g.id(g.v(a)) << " with arc id " << g.id(a) << " has the same direction as edge: " << g.id(g.u(lemon::ListGraph::Edge(a)))<< " " << g.id(g.v(lemon::ListGraph::Edge(a))) << "]"  <<  std::endl;       
-          else std::cout<< "arc " << g.id(g.u(a)) << " " << g.id(g.v(a)) << " with arc id " << g.id(a) << " has the same direction as edge: " << g.id(g.u(lemon    ::ListGraph::Edge(a)))<< " " << g.id(g.v(lemon::ListGraph::Edge(a))) << "]"  <<  std::endl; 
+//          std::cout << "  Can find edge in x: " << x.find(lemon::ListGraph::Edge(a))!=x.end() << std::endl; 
+          lp.addRow(x[lemon::ListGraph::Edge(a)]-f[f1.id()]>=0);
        }
       }
     }   
   }
-  
   //Create flow constraints as follows
   //We set up the conservation of flow for non source, target node n
   //And the flow value constraint for the source n
@@ -93,29 +107,32 @@ int main(){
     for(lemon::ListGraph::NodeIt target(source); target!=lemon::INVALID; ++target){
       if (source!=target){ 
         //define flowval, bij ouflow minus inflow of source
+        std::cout << "Source id: " << g.id(source) << "Target id: " << g.id(target) << std::endl;
         lemon::Lp::Expr flowVal;
         for (lemon::ListGraph::OutArcIt arc(g,source); arc != lemon::INVALID; ++arc){
-          SourceTargetArc f1(source,target,arc);
-          flowVal += f[f1];
+          SourceTargetArc f1(&g,source,target,arc);
+          flowVal += f[f1.id()];
+          std::cout << "    Outarc  ID: " << g.id(arc) << std::endl;
         }
         for (lemon::ListGraph::InArcIt arc(g,source); arc != lemon::INVALID; ++arc){ 
-          SourceTargetArc f1(source,target,arc); 
-          flowVal -= f[f1];
+          SourceTargetArc f1(&g,source,target,arc); 
+          flowVal -= f[f1.id()];
+          std::cout << "    Intarc  ID: " << g.id(arc) <<std::endl;
         }
         //set connectivity requirement to 2 fro the time being
-        lp.addRow(flowVal>=1);
+        lp.addRow(flowVal>=2);
         
         //formulate conservation of flow constraints for the all non-source and non-target nodes
         for(lemon::ListGraph::NodeIt n(g); n!=lemon::INVALID; ++n){
           if(n!=source && n!= target){
             lemon::Lp::Expr nodeFlow;
             for (lemon::ListGraph::OutArcIt arc(g,n); arc != lemon::INVALID; ++arc){
-              SourceTargetArc f1(source,target,arc); 
-              nodeFlow -= f[f1];
+              SourceTargetArc f1(&g,source,target,arc); 
+              nodeFlow += f[f1.id()];
             }
             for (lemon::ListGraph::InArcIt arc(g,n); arc != lemon::INVALID; ++arc){
-              SourceTargetArc f1(source,target,arc); 
-              nodeFlow -= f[f1];
+              SourceTargetArc f1(&g,source,target,arc); 
+              nodeFlow -= f[f1.id()];
             }
      
             lp.addRow(nodeFlow==0);
