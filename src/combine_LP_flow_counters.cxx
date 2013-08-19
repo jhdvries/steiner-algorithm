@@ -13,7 +13,7 @@ int main(){
   lemon::ListGraph::EdgeMap<int> c(g);
  
   //Adding 4 nodes to the graph
-  for(int i=0; i<10; i++){
+  for(int i=0; i<12; i++){
     g.addNode();
   }
 
