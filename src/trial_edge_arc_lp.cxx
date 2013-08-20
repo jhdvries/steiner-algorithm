@@ -1,3 +1,5 @@
+#include <iostream>
+#include <lemon/list_graph.h>
 #include <lemon/glpk.h>
 #include <lemon/lp.h>
 
@@ -5,8 +7,8 @@ int main(){
   lemon::Lp lp;
   lemon::ListGraph g;
   //define graph
-  lemon::ListGraph source = g.addNode();
-  lemon::ListGraph target = g.addNode();
+  lemon::ListGraph::Node source = g.addNode();
+  lemon::ListGraph::Node target = g.addNode();
   for(int i=0; i<4; i++){
       g.addNode();
    }
@@ -27,27 +29,38 @@ int main(){
         }
   }
   // Add a column to the problem for each arc
-  lemon::ListGraph EdgeMap<Lp::Col> f(g);
+  lemon::ListGraph::EdgeMap<lemon::Lp::Col> f(g);
   lp.addColSet(f);
   // Capacity constraints
-  for (EdgeIt a(g); a != INVALID; ++a) {
+  for (lemon::ListGraph::EdgeIt a(g); a != lemon::INVALID; ++a) {
         lp.colLowerBound(f[a], 0);
-        lp.colUpperBound(f[a], capacity[a]);
+        lp.colUpperBound(f[a], 1);
     }
   // Flow conservation constraints
-  for (NodeIt n(g); n != INVALID; ++n) {
+  for (lemon::ListGraph::NodeIt n(g); n != lemon::INVALID; ++n) {
         if (n == source || n == target) continue;
-        Lp::Expr e;
-        for (OutEdgeIt a(g, n); a != INVALID; ++a) e += f[a];
-        for (InEdgeIt a(g, n); a != INVALID; ++a) e -= f[a];
+        lemon::Lp::Expr e;
+        for (lemon::ListGraph::OutArcIt a(g, n); a != lemon::INVALID; ++a) e += f[a];
+        for (lemon::ListGraph::InArcIt a(g, n); a != lemon::INVALID; ++a) e -= f[a];
         lp.addRow(e == 0);
     }
   // Objective function
-  Lp::Expr o;
-  for (OutEdgeIt a(g, source); a != INVALID; ++a) o += f[a];
-  for (InEdgeIt a(g, source); a != INVALID; ++a) o -= f[a];
+  lemon::Lp::Expr o;
+  for (lemon::ListGraph::OutArcIt a(g, source); a != lemon::INVALID; ++a) o += f[a];
+  for (lemon::ListGraph::InArcIt a(g, source); a != lemon::INVALID; ++a) o -= f[a];
   lp.max();
   lp.obj(o);
   // Solve the LP problem
-  lp.solve();
+  if (lp.primalType() == lemon::Lp::OPTIMAL) {
+      std::cout << "Objective function value: " << lp.primal() << std::endl;
+    }
+    else {
+    std::cout << "Optimal solution not found." << std::endl;
+    }
+  if (lp.primalType() == lemon::Lp::UNDEFINED) {
+      std::cout << "GODVER, ongedefinieerd" << lp.primal() << std::endl;
+    }
+    else {
+    std::cout << "GELUKKIG, HIJ IS GEDEFINIEERD" << std::endl;
+    }
 }
