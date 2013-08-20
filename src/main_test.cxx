@@ -34,29 +34,29 @@ int main(){
     }
   }
   
-  //Weird function for finding some edge for input in the solver
-  lemon::ListGraph::EdgeMap<double> y(g);
-  int i;
-  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
-    i++;
-    if(i==2)solve_lp(&g, &y, &c, &r, &e, 1);   
-  }
-  
-  //Prints  output y
-  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
-    std::cout<< "the solution val is " << y[e] <<std::endl;
-  }
-  
-  //Output checker
-  if(check_sol_val(&g,&y, 0, 1,1)){
-    std::cout<< "There is a non- integral value in the solution"<< std::endl;  
-    if(check_sol_val(&g,&y, 0.5, 1,0)){
-      std::cout<< "There is a variable with fractional value >= then 1/2 in the solution"<< std::endl;
-    }
-  }
-  else std::cout<< "All solution values are integral"<< std::endl;
-  
-
+//  //Weird function for finding some edge for input in the solver
+//  lemon::ListGraph::EdgeMap<double> y(g);
+//  int i;
+//  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
+//    i++;
+//    if(i==2)solve_lp(&g, &y, &c, &r, &e, 1);   
+//  }
+//  
+//  //Prints  output y
+//  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
+//    std::cout<< "the solution val is " << y[e] <<std::endl;
+//  }
+//  
+//  //Output checker
+//  if(check_sol_val(&g,&y, 0, 1,1)){
+//    std::cout<< "There is a non- integral value in the solution"<< std::endl;  
+//    if(check_sol_val(&g,&y, 0.5, 1,0)){
+//      std::cout<< "There is a variable with fractional value >= then 1/2 in the solution"<< std::endl;
+//    }
+//  }
+//  else std::cout<< "All solution values are integral"<< std::endl;
+//  
+//
 
   return 0;
 }

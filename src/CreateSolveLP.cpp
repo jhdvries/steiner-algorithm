@@ -1,5 +1,5 @@
 #include <CreateSolveLp.h> 
-void solve_lp(lemon::ListGraph *g, lemon::ListGraph::EdgeMap<double> *y, lemon::ListGraph::EdgeMap<int> *c, RequirementFunction *r, lemon::ListGraph::Edge *changeedge, bool change){
+void solve_lp(lemon::ListGraph *g, lemon::ListGraph::EdgeMap<double> *y, lemon::ListGraph::EdgeMap<int> *c, RequirementFunction *r, lemon::ListGraph::EdgeMap<int> *F, lemon::ListGraph::Edge *changeedge, double *val , bool change){
 
   //define LP
   lemon::Lp lp;
@@ -16,15 +16,24 @@ void solve_lp(lemon::ListGraph *g, lemon::ListGraph::EdgeMap<double> *y, lemon::
   //Assign capacity constraints to x and f and initialising f variables
   for(lemon::ListGraph::EdgeIt e((*g)); e !=lemon::INVALID; ++e){
    
-   //if we need to fix variable on value >= 1/2
-   if(change == 1  && e == (*changeedge)){
-      lp.colLowerBound(x[e],0);
+    //if we need to fix variable on value >= 1/2 extra constraint
+    if(change == 1  && e == (*changeedge)){
+      lp.colLowerBound(x[e],0.5);
       lp.colUpperBound(x[e],1);
     }
     else{
-      //capacity constraint for x
-      lp.colLowerBound(x[e],0);
-      lp.colUpperBound(x[e],1);
+      if((*F)[e]==1){     
+        
+        //these variables need to be fixed at value 1 as they are in the Steiner network already
+        lp.colLowerBound(x[e],1);
+        lp.colUpperBound(x[e],1);
+      }
+      else{
+        
+        //all remaining cases
+        lp.colLowerBound(x[e],0);
+        lp.colUpperBound(x[e],1);
+      }   
     }
   }
 
@@ -36,10 +45,10 @@ void solve_lp(lemon::ListGraph *g, lemon::ListGraph::EdgeMap<double> *y, lemon::
     for(lemon::ListGraph::NodeIt source((*g)); source!=lemon::INVALID; ++source){
       for(lemon::ListGraph::NodeIt target(source); target!=lemon::INVALID; ++target){
         if(source!=target){
-          std::cout << "Ard id: " <<(*g).id(a) << std::endl;
-          std::cout << "  Source ID: " << (*g).id(source) << " Target ID: " << (*g).id(target) << std::endl;
-          std::cout << "  arc direction aligned with edge: " << (*g).direction(a) << std::endl;
-          std::cout << "  Size of flow variables f: " << f.size() << std::endl; 
+//          std::cout << "Ard id: " <<(*g).id(a) << std::endl;
+//          std::cout << "  Source ID: " << (*g).id(source) << " Target ID: " << (*g).id(target) << std::endl;
+//          std::cout << "  arc direction aligned with edge: " << (*g).direction(a) << std::endl;
+//          std::cout << "  Size of flow variables f: " << f.size() << std::endl; 
           
           //initialisng f variables for eacht SourceTargetArc
           SourceTargetArc f1(&(*g),source,target,a);
@@ -124,7 +133,8 @@ void solve_lp(lemon::ListGraph *g, lemon::ListGraph::EdgeMap<double> *y, lemon::
     
     //objective function value
     std::cout << "Objective function value: " << lp.primal() << std::endl;
-    
+    (*val)=lp.primal();
+
     //print all edges and the corresponding x values
     for(lemon::ListGraph::EdgeIt e((*g)); e!=lemon::INVALID; ++e){
       (*y)[e] = lp.primal(x[e]); 
