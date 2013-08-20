@@ -6,6 +6,7 @@
 #include "RequirementFunction.h"
 #include "CreateSolveLp.h"
 #include "CheckSolVal.h"
+#include "IterativeRounding.h"
 
 
 int main(){
@@ -13,7 +14,6 @@ int main(){
   //Generate a graph with nodes and edges
   lemon::ListGraph g;
   generate_complete_graph(&g,10);
-//  generate_peterson_graph(&g);
 
   //assigns a cost function to the edges
   lemon::ListGraph::EdgeMap<int> c(g);
@@ -26,42 +26,38 @@ int main(){
   //Assigns the requirements to all node pairs
   RequirementFunction r;
   assign_connectivity_random(&r,&g);
+  
+  //retrieves value of final solution
+  double valsol;
 
-  //Checks the requirements
-  for(lemon::ListGraph::NodeIt u(g); u !=lemon::INVALID; ++u){
-    for(lemon::ListGraph::NodeIt v(g); v !=lemon::INVALID; ++v){
-      std::cout << "Requirement between " << g.id(u) <<" and" << g.id(v) << " is " <<r.getValue(u,v) << std::endl;
-    }
+  //retrieves value of LP relaxation solution
+  double valrsol;
+
+  //Final solution variable values
+  lemon::ListGraph::EdgeMap<double> sol(g);
+
+  //Relaxation  solution variable values
+  lemon::ListGraph::EdgeMap<double> rsol(g);
+
+  
+  //iterative rounding while loop as describe in Algorithm 4
+  iterative_rounding(&g, &c, &r, &sol , &rsol , &valsol , &valrsol );
+  
+  //Present results approximation algorithm
+  std::cout << "The solution found by the approximation algorithm has cost" << valsol  << std::endl;
+  
+  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
+    std::cout << "x[ " << g.id(g.u(e))<<" " <<g.id(g.v(e)) << "] = "  << sol[e] << std::endl;
+  }
+
+//Present results approximation algorithm
+  std::cout << "The solution of the LP relaxation has cost" << valrsol  << std::endl;
+  
+  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
+    std::cout << "x(LP-relax)[ " << g.id(g.u(e))<<" " <<g.id(g.v(e)) << "] = "  << rsol[e] << std::endl;
   }
   
-//  //Weird function for finding some edge for input in the solver
-//  lemon::ListGraph::EdgeMap<double> y(g);
-//  int i;
-//  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
-//    i++;
-//    if(i==2)solve_lp(&g, &y, &c, &r, &e, 1);   
-//  }
-//  
-//  //Prints  output y
-//  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
-//    std::cout<< "the solution val is " << y[e] <<std::endl;
-//  }
-//  
-//  //Output checker
-//  if(check_sol_val(&g,&y, 0, 1,1)){
-//    std::cout<< "There is a non- integral value in the solution"<< std::endl;  
-//    if(check_sol_val(&g,&y, 0.5, 1,0)){
-//      std::cout<< "There is a variable with fractional value >= then 1/2 in the solution"<< std::endl;
-//    }
-//  }
-//  else std::cout<< "All solution values are integral"<< std::endl;
-//  
-//
-
   return 0;
 }
-
-//void solve_lp(lemon::ListGraph *,lemon::ListGraph::EdgeMap<double> *,lemon::ListGraph::EdgeMap<int> *, RequirementFunction*, lemon::ListGraph::Edge, bool );    
-
 
 
