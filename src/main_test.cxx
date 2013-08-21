@@ -50,7 +50,7 @@ int main(){
     std::cout << "x[ " << g.id(g.u(e))<<" " <<g.id(g.v(e)) << "] = "  << sol[e] << std::endl;
   }
 
-//Present results approximation algorithm
+  //Present results approximation algorithm
   std::cout << "The solution of the LP relaxation has cost" << valrsol  << std::endl;
   
   for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
