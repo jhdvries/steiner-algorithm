@@ -3,8 +3,8 @@
 #include <lemon/list_graph.h>
 #include <RequirementFunction.h>
 
-void assign_connectivity_random(RequirementFunction *, lemon::ListGraph *);
-void assign_connectivity_constant(RequirementFunction *, lemon::ListGraph *);
+void assign_connectivity_random(RequirementFunction *, lemon::ListGraph *, int);
+void assign_connectivity_constant(RequirementFunction *, lemon::ListGraph *, int);
 //void fill_cost_difference(lemon::ListGraph::EdgeMap<int> *, lemon::ListGraph *);
 #endif
 

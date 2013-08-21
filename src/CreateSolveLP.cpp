@@ -1,16 +1,16 @@
 #include <CreateSolveLp.h> 
-void solve_lp(lemon::ListGraph *g, lemon::ListGraph::EdgeMap<double> *y, lemon::ListGraph::EdgeMap<int> *c, RequirementFunction *r, lemon::ListGraph::EdgeMap<int> *F, lemon::ListGraph::Edge *changeedge, double *val , bool change){
+void solve_lp(lemon::ListGraph *g, lemon::ListGraph::EdgeMap<double> *y, lemon::ListGraph::EdgeMap<double> *c, RequirementFunction *r, lemon::ListGraph::EdgeMap<int> *F, lemon::ListGraph::Edge *changeedge, double *val , bool change){
 
   //define LP
   lemon::Lp lp;
 
-  std::cout<< "Defined LP p " << std::endl; 
+//  std::cout<< "Defined LP p " << std::endl; 
 
   //define capacity variable x and flow variable f
   lemon::ListGraph::EdgeMap<lemon::Lp::Col> x((*g));
   std::map<int, lemon::Lp::Col> f;
 
-  std::cout<< "Defined LP and initialised both the x variable map and the f variable map " << std::endl;; 
+//  std::cout<< "Defined LP and initialised both the x variable map and the f variable map " << std::endl;; 
 
   lp.addColSet(x);
   //Assign capacity constraints to x and f and initialising f variables
@@ -57,9 +57,9 @@ void solve_lp(lemon::ListGraph *g, lemon::ListGraph::EdgeMap<double> *y, lemon::
           std::map<SourceTargetArc,lemon::Lp::Col>::iterator it;
   
           f[f1.id()]=lp.addCol();
-          std::cout << "  Size of flow variables f: " << f.size() << std::endl; 
-          if (f.find(f1.id())!=f.end()) std::cout <<"  yep"<<std::endl;
-          else  std::cout << "  I CANNOT FIND THE ELEMENT THE I JUST ADDED" << std::endl;
+//          std::cout << "  Size of flow variables f: " << f.size() << std::endl; 
+//          if (f.find(f1.id())!=f.end()) std::cout <<"  yep"<<std::endl;
+//          else  std::cout << "  I CANNOT FIND THE ELEMENT THE I JUST ADDED" << std::endl;
 
           //capacity constraints for f
           lp.colLowerBound(f[f1.id()],0);
@@ -81,17 +81,17 @@ void solve_lp(lemon::ListGraph *g, lemon::ListGraph::EdgeMap<double> *y, lemon::
     for(lemon::ListGraph::NodeIt target(source); target!=lemon::INVALID; ++target){
       if (source!=target){ 
         //define flowval, bij ouflow minus inflow of source
-        std::cout << "Source id: " << (*g).id(source) << "Target id: " << (*g).id(target) << std::endl;
+//        std::cout << "Source id: " << (*g).id(source) << "Target id: " << (*g).id(target) << std::endl;
         lemon::Lp::Expr flowVal;
         for (lemon::ListGraph::OutArcIt arc((*g),source); arc != lemon::INVALID; ++arc){
           SourceTargetArc f1(&(*g),source,target,arc);
           flowVal += f[f1.id()];
-          std::cout << "    Outarc  ID: " << (*g).id(arc) << std::endl;
+//          std::cout << "    Outarc  ID: " << (*g).id(arc) << std::endl;
         }
         for (lemon::ListGraph::InArcIt arc((*g),source); arc != lemon::INVALID; ++arc){ 
           SourceTargetArc f1(&(*g),source,target,arc); 
           flowVal -= f[f1.id()];
-          std::cout << "    Intarc  ID: " << (*g).id(arc) <<std::endl;
+//          std::cout << "    Intarc  ID: " << (*g).id(arc) <<std::endl;
         }
         //set connectivity requirement to 2 fro the time being
         lp.addRow(flowVal>=(*r).getValue(source, target));
@@ -132,13 +132,13 @@ void solve_lp(lemon::ListGraph *g, lemon::ListGraph::EdgeMap<double> *y, lemon::
   if (lp.primalType() == lemon::Lp::OPTIMAL) {
     
     //objective function value
-    std::cout << "Objective function value: " << lp.primal() << std::endl;
+//    std::cout << "Objective function value: " << lp.primal() << std::endl;
     (*val)=lp.primal();
 
     //print all edges and the corresponding x values
     for(lemon::ListGraph::EdgeIt e((*g)); e!=lemon::INVALID; ++e){
       (*y)[e] = lp.primal(x[e]); 
-      std::cout << "x[" << (*g).id((*g).u(e)) << (*g).id((*g).v(e)) << "] = "<< lp.primal(x[e])  << std::endl;
+//      std::cout << "x[" << (*g).id((*g).u(e)) << (*g).id((*g).v(e)) << "] = "<< lp.primal(x[e])  << std::endl;
     }
   }
 

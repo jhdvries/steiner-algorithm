@@ -11,7 +11,7 @@
 
 
 // 
-void iterative_rounding(lemon::ListGraph * , lemon::ListGraph::EdgeMap<int> * , RequirementFunction * , lemon::ListGraph::EdgeMap<double> * , 
+void iterative_rounding(lemon::ListGraph * , lemon::ListGraph::EdgeMap<double> * , RequirementFunction * , lemon::ListGraph::EdgeMap<double> * , 
     lemon::ListGraph::EdgeMap<double> * , double * , double * );
 
 // input is 

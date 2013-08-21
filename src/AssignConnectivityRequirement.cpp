@@ -1,8 +1,8 @@
 #include "AssignConnectivityRequirement.h"
 
-void assign_connectivity_random(RequirementFunction *r, lemon::ListGraph *g){
+void assign_connectivity_random(RequirementFunction *r, lemon::ListGraph *g, int i){
   for(lemon::ListGraph::NodeIt u((*g)); u !=lemon::INVALID; ++u){ 
-    for(lemon::ListGraph::NodeIt v((*g)); v !=lemon::INVALID; ++v)(*r).assignValue(u,v,rand() % 3 + 1);
+    for(lemon::ListGraph::NodeIt v((*g)); v !=lemon::INVALID; ++v)(*r).assignValue(u,v,rand() % i + 1);
   }
 }
 

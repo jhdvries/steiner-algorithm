@@ -13,11 +13,13 @@ int main(){
   
   //Generate a graph with nodes and edges
   lemon::ListGraph g;
-  generate_complete_graph(&g,10);
+  generate_peterson_graph(&g,8);
 
-  //assigns a cost function to the edges
-  lemon::ListGraph::EdgeMap<int> c(g);
-  fill_cost_random(&c, &g);
+  //assigns a cost function to the edges fills it with a maximum double
+  double max = 4;
+  
+  lemon::ListGraph::EdgeMap<double> c(g);
+  fill_cost_random(&c, &g, max);
 
   //Test the costs
   for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
@@ -25,7 +27,7 @@ int main(){
   
   //Assigns the requirements to all node pairs
   RequirementFunction r;
-  assign_connectivity_random(&r,&g);
+  assign_connectivity_constant(&r,&g,1);
   
   //retrieves value of final solution
   double valsol;
@@ -54,7 +56,7 @@ int main(){
   std::cout << "The solution of the LP relaxation has cost" << valrsol  << std::endl;
   
   for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
-    std::cout << "x(LP-relax)[ " << g.id(g.u(e))<<" " <<g.id(g.v(e)) << "] = "  << rsol[e] << std::endl;
+    std::cout << "x(LP-relax)[" << g.id(g.u(e))<<" " <<g.id(g.v(e)) << "] = "  << rsol[e] << " this edge has costs " << c[e] << std::endl;
   }
   
   return 0;

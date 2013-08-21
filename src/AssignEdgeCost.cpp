@@ -1,12 +1,15 @@
 #include "AssignEdgeCost.h"
 
 //All cost are randomly generated from a ... distribution
-void fill_cost_random(lemon::ListGraph::EdgeMap<int> *c, lemon::ListGraph *g ){
-  for(lemon::ListGraph::EdgeIt e((*g)); e !=lemon::INVALID; ++e) (*c)[e] = rand() % 10;
+void fill_cost_random(lemon::ListGraph::EdgeMap<double> *c, lemon::ListGraph *g , double max ){
+  max = max + 0.5;
+  int m = int(max);
+  srand(time(0));
+  for(lemon::ListGraph::EdgeIt e((*g)); e !=lemon::INVALID; ++e) (*c)[e] = rand() % m + 1;
 }
 
 //All cost are of the integer value u
-void fill_cost_constant(lemon::ListGraph::EdgeMap<int> *c , lemon::ListGraph *g, int k ){
+void fill_cost_constant(lemon::ListGraph::EdgeMap<double> *c , lemon::ListGraph *g, double  k ){
   for(lemon::ListGraph::EdgeIt e((*g)); e !=lemon::INVALID; ++e) (*c)[e] = k;
 }
 
