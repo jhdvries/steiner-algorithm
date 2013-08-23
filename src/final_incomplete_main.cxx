@@ -15,17 +15,10 @@ int main(){
   lemon::ListGraph g;
   generate_incomplete_graph(&g,10);
 
-  for(lemon::ListGraph::EdgeIt e(g); e!=lemon::INVALID; ++e)
-    std::cout<< "edge from node " << g.id(g.u(e)) << " to node " << g.id(g.v(e)) << std::endl;
-  
   //assigns a cost function to the edges fills it with a maximum double
   lemon::ListGraph::EdgeMap<double> c(g);
   fill_cost_random(&c, &g, 4);
 
-  //Test the costs
-  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
-  std::cout << "The cost Edge is " << c[e] << std::endl;}
-  
   //Assigns the requirements to all node pairs
   RequirementFunction r;
   assign_connectivity_random(&r,&g,2);
@@ -45,25 +38,20 @@ int main(){
   //iterative rounding while loop as describe in Algorithm 4
   iterative_rounding(&g, &c, &r, &sol , &rsol , &valsol , &valrsol );
   
-//  //Present results approximation algorithm
-//  std::cout << "The solution found by the approximation algorithm has cost" << valsol  << std::endl;
-//  
-//  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
-//    std::cout << "x[ " << g.id(g.u(e))<<" " <<g.id(g.v(e)) << "] = "  << sol[e] << std::endl;
-//  }
-//
-//  //Present results approximation algorithm
-//  std::cout << "The solution of the LP relaxation has cost" << valrsol  << std::endl;
-//  
-//  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
-//    std::cout << "x(LP-relax)[" << g.id(g.u(e))<<" " <<g.id(g.v(e)) << "] = "  << rsol[e] << " this edge has costs " << c[e] << std::endl;
-//  }
-//    boolean aprox= valsol/valrsol;
-//   std::cout << "The solution of the LP relaxation has cost" << valrsol  << std::endl;
-//   std::cout << "The solution found by the approximation algorithm has cost" << valsol  << std::endl;
-//
-//   std::cout << "the integralit Gap is" << aprox  << std::endl;
+  //Present results approximation algorithm
+  std::cout << "The solution of the LP relaxation has cost" << valrsol  << std::endl;
+  
+  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
+    std::cout << "x(LP-relax)[" << g.id(g.u(e))<<" " <<g.id(g.v(e)) << "] = "  << rsol[e] <<  std::endl;
+  }
  
+  //Present results approximation algorithm
+  std::cout << "The solution found by the approximation algorithm has cost" << valsol  << std::endl;
+  
+  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
+    std::cout << "x[ " << g.id(g.u(e))<<" " <<g.id(g.v(e)) << "] = "  << sol[e] << std::endl;
+  }
+
   return 0;
 }
 

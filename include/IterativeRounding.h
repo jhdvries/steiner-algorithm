@@ -10,11 +10,11 @@
 #include "CheckSolVal.h"
 
 
-// 
+// The iterative rounding part of the approximation algorithm
 void iterative_rounding(lemon::ListGraph * , lemon::ListGraph::EdgeMap<double> * , RequirementFunction * , lemon::ListGraph::EdgeMap<double> * , 
     lemon::ListGraph::EdgeMap<double> * , double * , double * );
 
-// input is 
+// Input 
 //1 the graph G,
 //2 the Cost edgemap
 //3 the nodepair requirement function
@@ -24,6 +24,5 @@ void iterative_rounding(lemon::ListGraph * , lemon::ListGraph::EdgeMap<double> *
 //7 The value of the first LP relaxation
 
 #endif
-//void solve_lp(lemon::ListGraph *,lemon::ListGraph::EdgeMap<double> *,lemon::ListGraph::EdgeMap<int> *, RequirementFunction*, lemon::ListGraph::EdgeMap<int> *, lemon::ListGraph::Edge *, double*, bool );    
 
 

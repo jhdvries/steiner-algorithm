@@ -16,14 +16,9 @@ int main(){
   generate_peterson_graph(&g,8);
 
   //assigns a cost function to the edges fills it with a maximum double
-  
-  
   lemon::ListGraph::EdgeMap<double> c(g);
   fill_cost_constant(&c, &g, 1);
 
-  //Test the costs
-  for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){
-  std::cout << "The cost Edge is " << c[e] << std::endl;}
   
   //Assigns the requirements to all node pairs
   RequirementFunction r;
@@ -51,7 +46,7 @@ int main(){
     std::cout << "x(LP-relax)[" << g.id(g.u(e))<<" " <<g.id(g.v(e)) << "] = "  << rsol[e] <<  std::endl;
   }
  
- //Present results approximation algorithm
+  //Present results approximation algorithm
   std::cout << "The solution found by the approximation algorithm has cost" << valsol  << std::endl;
   
   for(lemon::ListGraph::EdgeIt e(g); e !=lemon::INVALID; ++e){

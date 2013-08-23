@@ -1,6 +1,6 @@
 #ifndef REQUIREMENTFUNCTION_H
 #define REQUIREMENTFUNCTION_H
-#include <utility> // pair & make_pair
+#include <utility> 
 #include <map>
 #include "lemon/list_graph.h"
 
@@ -14,4 +14,6 @@ class RequirementFunction{
     private:
         std::map< std::pair< lemon::ListGraph::Node , lemon::ListGraph::Node > , int> _requirement_function;
 };
+
+//Technical necessity for indexing the flow variables
 #endif

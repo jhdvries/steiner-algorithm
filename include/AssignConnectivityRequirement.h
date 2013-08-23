@@ -5,7 +5,8 @@
 
 void assign_connectivity_random(RequirementFunction *, lemon::ListGraph *, int);
 void assign_connectivity_constant(RequirementFunction *, lemon::ListGraph *, int);
-//void fill_cost_difference(lemon::ListGraph::EdgeMap<int> *, lemon::ListGraph *);
+//Both functions Assign connectivty Requirement to every pair of nodes in the graph
+
 #endif
 
 
