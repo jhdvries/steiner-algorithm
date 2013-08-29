@@ -60,15 +60,18 @@ void iterative_rounding(lemon::ListGraph *g, lemon::ListGraph::EdgeMap<double> *
         if(F[e]==0){
           solve_lp(&(*g), &y, &*c, &*r, &F, &e, &valconstrlp, 1);          
 
-          //if true then we can include edge uv in the steiner network  and break from for the loop 
-          if(valconstrlp<=valiteratelp){
-     
-           //can be used to print inbetween results 
-           //std::cout<< "constraining edge e" << (*g).id(e) << "and total cost is"<< valconstrlp  << std::endl;
+          //can be used to print inbetween results 
+          //std::cout<< "constraining edge e" << (*g).id(e) << "and total cost is"<< valconstrlp  << std::endl;
 
-           // for(lemon::ListGraph::EdgeIt k(*g); k !=lemon::INVALID; ++k)
-           //   std::cout << "x[ " << (*g).id((*g).u(k))<<" " <<(*g).id((*g).v(k)) << "] = "  << y[k] << std::endl;
- 
+          // for(lemon::ListGraph::EdgeIt k(*g); k !=lemon::INVALID; ++k)
+          //   std::cout << "x[ " << (*g).id((*g).u(k))<<" " <<(*g).id((*g).v(k)) << "] = "  << y[k] << std::endl;
+
+          //if true then we can include edge uv in the steiner network  and break from for the loop 
+          if(valconstrlp<=valiteratelp+1e-6){//error margin of the solver
+          
+            // can be used to show which edge has been included
+            // std::cout<<"inlduded edge "<< (*g).id((*g).u(e))<<" " <<(*g).id((*g).v(e)) <<std::endl;}
+     
             F[e]=1;
             break;
           }

@@ -6,9 +6,8 @@
 #include "AssignEdgeCost.h"
 #include "AssignConnectivityRequirement.h"
 #include "RequirementFunction.h"
-#include "CreateSolveLp.h"
+#include "CreateSolveLP.h"
 #include "CheckSolVal.h"
-
 
 // The iterative rounding part of the approximation algorithm
 void iterative_rounding(lemon::ListGraph * , lemon::ListGraph::EdgeMap<double> * , RequirementFunction * , lemon::ListGraph::EdgeMap<double> * , 

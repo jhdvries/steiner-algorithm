@@ -10,7 +10,7 @@ bool check_sol_val(lemon::ListGraph *g, lemon::ListGraph::EdgeMap<double> *y, le
   if(integercheck == 1){  
     for(lemon::ListGraph::EdgeIt e((*g)); e !=lemon::INVALID; ++e){
       if((*F)[e]==0){
-        if((*y)[e] > 0){
+        if((*y)[e] > 1e-6){//error margin of the solver
           if((*y)[e] < 1) return 1;
         }
       }

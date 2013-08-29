@@ -4,7 +4,7 @@
 #include "AssignEdgeCost.h"
 #include "AssignConnectivityRequirement.h"
 #include "RequirementFunction.h"
-#include "CreateSolveLp.h"
+#include "CreateSolveLP.h"
 #include "CheckSolVal.h"
 #include "IterativeRounding.h"
 
@@ -17,11 +17,11 @@ int main(){
 
   //assigns a cost function to the edges fills it with a maximum double
   lemon::ListGraph::EdgeMap<double> c(g);
-  fill_cost_random(&c, &g, 4);
+  fill_cost_constant(&c, &g, 1);
 
   //Assigns the requirements to all node pairs
   RequirementFunction r;
-  assign_connectivity_random(&r,&g,2);
+  assign_connectivity_constant(&r,&g,1);
   
   //retrieves value of final solution
   double valsol;

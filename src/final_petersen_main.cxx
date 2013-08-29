@@ -4,7 +4,7 @@
 #include "AssignEdgeCost.h"
 #include "AssignConnectivityRequirement.h"
 #include "RequirementFunction.h"
-#include "CreateSolveLp.h"
+#include "CreateSolveLP.h"
 #include "CheckSolVal.h"
 #include "IterativeRounding.h"
 
