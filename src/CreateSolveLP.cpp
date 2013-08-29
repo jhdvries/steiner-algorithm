@@ -1,4 +1,4 @@
-#include <CreateSolveLp.h> 
+#include <CreateSolveLP.h> 
 
 //Creates the compact LP for the IP or the residual IP depending on the iteration of the algorithm
 void solve_lp(lemon::ListGraph *g, lemon::ListGraph::EdgeMap<double> *y, lemon::ListGraph::EdgeMap<double> *c, RequirementFunction *r, lemon::ListGraph::EdgeMap<int> *F, lemon::ListGraph::Edge *changeedge, double *val , bool change){
