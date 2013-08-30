@@ -3,7 +3,7 @@ steiner-algorithm
 
 Implementations 2 approximation algorithm for the generalized steiner netwerk problem
 
-### Requirements
+## Requirements
 
 * [gcc](http://gcc.gnu.org)
 * [glpk](http://ftp.gnu.org/gnu/glpk/): for lp solver
@@ -16,3 +16,7 @@ Tested with versions
 * lemon 1.2.4
 
 ## Instalation
+
+clone this reporistory
+
+"git clone https://github.com/jhdvries/steiner-algorithm.git"
