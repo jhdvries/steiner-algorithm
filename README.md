@@ -46,12 +46,15 @@ When this is done, the code is obtained cloning the following reporistory
 
 After compiling the code, you can execute either.
 
-*final_complete_main.cxx    Solves the generalized steiner network on a complete graph with 10 nodes, cost 1 for all edges and connectivity requirement 1 for all nodepairs. 
+* final_complete_main.cxx    
+Solves the generalized steiner network on a complete graph with 10 nodes, cost 1 for all edges and connectivity requirement 1 for all nodepairs. 
 
-*final_incomplete_main.cxx    Solves the generalized steiner network on a incomplete graph with 10 nodes, cost 1 for all edges and connectivity requirement 1 for all nodepairs.
+* final_incomplete_main.cxx    
+Solves the generalized steiner network on a incomplete graph with 10 nodes, cost 1 for all edges and connectivity requirement 1 for all nodepairs.
 
-*final_complete_main.cxx    Solves the generalized steiner network on the petersen graph with 10 nodes, cost 1 for all edges and connectivity requirement 1 for all nodepairs.
+* final_complete_main.cxx    
+Solves the generalized steiner network on the petersen graph with 10 nodes, cost 1 for all edges and connectivity requirement 1 for all nodepairs.
 
-Note that the incomplete graph which is randomly generated for final_incomplete_main.cxx can result in an infeasible problem. If so, simply execute the programm again. 
+Note that the instance on the incomplete graph, which is randomly generated for final_incomplete_main.cxx, might not have a feasible solution. If so, simply execute the programm again. 
 
 The output is the solution to the LP relaxation and it's value and the approximated solution and it's value. 
