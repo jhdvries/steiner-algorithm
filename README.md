@@ -14,3 +14,5 @@ Tested with versions
 * gcc 4.2.1
 * glpk 4.35, NB: make sure to use this version, for lemon's compatibility
 * lemon 1.2.4
+
+## Instalation
