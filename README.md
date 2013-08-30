@@ -5,9 +5,9 @@ Implementations 2 approximation algorithm for the generalized steiner netwerk pr
 
 ### Requirements
 
-* (gcc)[http://gcc.gnu.org]
-* (glpk)[http://ftp.gnu.org/gnu/glpk/]: for lp solver
-* (lemon)[http://lemon.cs.elte.hu/trac/lemon/wiki/Downloads]: lemon graph library
+* [gcc](http://gcc.gnu.org)
+* [glpk](http://ftp.gnu.org/gnu/glpk/): for lp solver
+* [lemon](http://lemon.cs.elte.hu/trac/lemon/wiki/Downloads): lemon graph library
 
 Tested with versions 
 
