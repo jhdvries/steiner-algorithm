@@ -3,56 +3,83 @@ steiner-algorithm
 
 Implementations 2 approximation algorithm for the generalized steiner netwerk problem
 
-## Requirements
+### Contains
 
-* [gcc](http://gcc.gnu.org) :Standard compiler 
-* [glpk](http://ftp.gnu.org/gnu/glpk/): for lp solver
-* [lemon](http://lemon.cs.elte.hu/trac/lemon/wiki/Downloads): lemon graph library
+Executable files
+* src/final_complete_main.cxx
+* src/final_incomplete_main.cxx
+* src/final_petersen_main.cxx
+* src/first_lemon.cxx
 
-Tested with versions 
+Header files
+* include/AssignConnectivityRequirement.h
+* include/AssignEdgeCost.h
+* include/CheckSolVal.h
+* include/CreateSolveLP.h
+* include/GenerateGraph.h
+* include/IterativeRounding.h
+* include/RequirementFunction.h
+* include/SourceTargetArc.h
 
-* gcc 4.2.1    Standard compiler 
-* glpk 4.35,   NB: make sure to use this version, for lemon's compatibility
-* lemon 1.2.4  A c++ library to 
+Source code files
+* src/AssignConnectivityRequirement.cpp
+* src/AssignEdgeCost.cpp
+* src/CheckSolVal.cpp
+* src/CreateSolveLP.cpp
+* src/GenerateGraph.cpp
+* src/IterativeRounding.cpp
+* src/SourceTargetArc.cpp
+
+
+### Requirements
+
+The Make file assumes gcc, which is installed on most linux and mac machines. 
 
 ## Instalation
-I will give the whole range of commands that are necessary. This approach has been tested for mac, linux and ubuntu. It is not guaranteed that it works for microsoft. It assumed that the reader has previously compiled and executed code from the command prompt.
+I spell out all the commands needed in order to execute a version of the program. 
+I will assume that the reader can open a terminal, navigate through directries using the command line and untar/zip files.
+The installation and execution has been tested for mac and linux. 
+It has not been tested using microsoft. 
 
-First install glpk-4.35. by typing the following, the parenthesized (.gz) might be required. For mac it is not required.
+Note: on a mac, .tar.gz files are automatically unzipped so in the commands below .gz can be ommited, as indicated with the parenthesized (.gz).
 
-* cd ~
-* mv Downloads/glpk-4.35.tar(.gz) .
+### Install glpk
+
+Move the glpk-4.35.tar(.gz) to a directory of your choice, go to this directory. Then execute
+
 * tar xvf(z) glpk-4.35.tar(.gz)
 * cd glpk-4.35
 * ./configure
 * make
 * sudo make install 
 
-Then install lemon-1.2.4. by typing the following, the parenthesized (.gz) might be required. For mac it is not required.
+### Install lemon
 
-* cd ~
-* mv Downloads/lemon-1.2.4.tar(.gz) .
+Move the glpk-4.35.tar(.gz) to a directory of your choice, go to this directory. Then execute
+
 * tar xvf(z) lemon-1.2.4.tar(.gz)
 * cd lemon-1.2.4
 * ./configure
 * make
 * sudo make install 
 
-##Running the algorithm
+### Install 
 
-When this is done, the code is obtained cloning the following reporistory
+* tar xvf(z) steiner-algorithm.tar(.gz)
+* cd steiner-algorithm
+* make
 
-"git clone https://github.com/jhdvries/steiner-algorithm.git"
+##Execution
 
-After compiling the code, you can execute either.
+After compiling the code the executables are in the bin directory, run them by typing:
 
-* final_complete_main.cxx    
+* ./bin/final_complete_main    
 Solves the generalized steiner network on a complete graph with 10 nodes, cost 1 for all edges and connectivity requirement 1 for all nodepairs. 
 
-* final_incomplete_main.cxx    
+* ./bin/final_incomplete_main    
 Solves the generalized steiner network on a incomplete graph with 10 nodes, cost 1 for all edges and connectivity requirement 1 for all nodepairs.
 
-* final_petersen_main.cxx    
+* ./bin/final_petersen_main    
 Solves the generalized steiner network on the petersen graph with 10 nodes, cost 1 for all edges and connectivity requirement 1 for all nodepairs.
 
 Note that the instance on the incomplete graph, which is randomly generated for final_incomplete_main.cxx, might not have a feasible solution. If so, simply execute the programm again. 
