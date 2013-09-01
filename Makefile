@@ -1,12 +1,12 @@
 ############################################################################################
 #
 # makefile
-#
+#	
 # Original Author : Christopher Hunt
 # Creation Date   : 05/04/2013
 #
-# Last Update     : Christopher Hunt & Ben Krikler
-# At              : 05/04/2013
+# Last Update     : candidate 89837
+# At              : 30/08/2013
 #
 #
 # A simple, flexible makefile designed to work well within a rigid directory structure.
