@@ -1,15 +1,14 @@
 steiner-algorithm
 =================
 
-Implementations 2 approximation algorithm for the generalized steiner netwerk problem
+Implementations 2 approximation algorithm for the generalized steiner netwerk problem. In this document, the contents, instalation guide and user guide for the code is given.
 
-### Contains
+### Contents
 
 Executable files
 * src/final_complete_main.cxx
 * src/final_incomplete_main.cxx
 * src/final_petersen_main.cxx
-* src/first_lemon.cxx
 
 Header files
 * include/AssignConnectivityRequirement.h
@@ -39,7 +38,7 @@ The Make file assumes gcc, which is installed on most linux and mac machines.
 I spell out all the commands needed in order to execute a version of the program. 
 I will assume that the reader can open a terminal, navigate through directries using the command line and untar/zip files.
 The installation and execution has been tested for mac and linux. 
-It has not been tested using microsoft. 
+The instalation guide has not been tested using microsoft. 
 
 Note: on a mac, .tar.gz files are automatically unzipped so in the commands below .gz can be ommited, as indicated with the parenthesized (.gz).
 
@@ -71,7 +70,7 @@ Move the glpk-4.35.tar(.gz) to a directory of your choice, go to this directory.
 
 ##Execution
 
-After compiling the code the executables are in the bin directory, run them by typing:
+After compiling the code, the executables are in the bin directory, run them by typing:
 
 * ./bin/final_complete_main    
 Solves the generalized steiner network on a complete graph with 10 nodes, cost 1 for all edges and connectivity requirement 1 for all nodepairs. 
