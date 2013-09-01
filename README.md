@@ -1,11 +1,11 @@
-steiner-algorithm
+Steiner-algorithm
 =================
 
 Implementations 2 approximation algorithm for the generalized steiner netwerk problem. In this document, the contents, instalation guide and user guide for the code is given.
 
-### Contents
+## Contents
 
-Executable files
+Source for executable files
 * src/final_complete_main.cxx
 * src/final_incomplete_main.cxx
 * src/final_petersen_main.cxx
@@ -30,7 +30,7 @@ Source code files
 * src/SourceTargetArc.cpp
 
 
-### Requirements
+## Requirements
 
 The Make file assumes gcc, which is installed on most linux and mac machines. 
 
@@ -85,7 +85,7 @@ Note that the instance on the incomplete graph, which is randomly generated for 
 
 The output is the solution to the LP relaxation and it's value and the approximated solution and it's value.
 
-##Running options
+## Adjustment options
 
 There are several options for adjusting the instances that are solved by the algorithm. 
 
