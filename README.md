@@ -54,7 +54,7 @@ Move the glpk-4.35.tar(.gz) to a directory of your choice, go to this directory.
 
 ### Install lemon
 
-Move the glpk-4.35.tar(.gz) to a directory of your choice, go to this directory. Then execute
+Move the lemon-1.2.4.tar(.gz) to a directory of your choice, go to this directory. Then execute
 
 * tar xvf(z) lemon-1.2.4.tar(.gz)
 * cd lemon-1.2.4
@@ -64,7 +64,7 @@ Move the glpk-4.35.tar(.gz) to a directory of your choice, go to this directory.
 
 ### Install 
 
-* tar xvf(z) steiner-algorithm.tar(.gz)
+* git clone git@github.com:jhdvries/steiner-algorithm
 * cd steiner-algorithm
 * make
 
